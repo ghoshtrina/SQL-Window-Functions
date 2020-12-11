@@ -21,5 +21,29 @@ as average_weight FROM windowfunctions.cats;
 SELECT name, SUM(weight) OVER(ORDER BY weight DESC) as running_total
 FROM windowfunctions.cats;
 
+--- 5. The cats form a line grouped by color. Inside each color group the cats order themselves 
+---		by name. Every cat must have a unique number for its place in the line.
+---		We must assign each cat a unique number while maintaining their color & name ordering.
+SELECT ROW_NUMBER() OVER(ORDER BY color, name) AS number, name, color
+FROM windowfunctions.cats;
 
+--- 6. We would like to find the heaviest cat. Order all our cats by weight.
+---		The two heaviest cats should both be 1st. The next heaviest should be 3rd.
+SELECT RANK() OVER(ORDER BY weight DESC) AS rank, name, weight
+FROM windowfunctions.cats;
 
+--- 7. For cats age means seniority, we would like to rank the cats by age (oldest first).
+---		However we would like their ranking to be sequentially increasing.
+SELECT DENSE_RANK() OVER(ORDER BY age DESC) AS rank, name, age
+FROM windowfunctions.cats;
+
+--- 8. Each cat would like to know what percentage of cats weigh less than it.
+SELECT name, weight, percent_rank() OVER(ORDER BY weight) as perc
+FROM windowfunctions.cats;
+
+--- 9. Each cat would like to know what weight percentile it is in. 
+---		This requires casting to an integer.
+SELECT name, weight, CAST((cume_dist() OVER(ORDER BY weight ))*100 AS INTEGER) as perc
+FROM windowfunctions.cats;
+
+---10. 
